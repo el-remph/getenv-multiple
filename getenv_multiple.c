@@ -14,20 +14,6 @@ extern const char *const * environ;
 	getenv_multiple(env_vars, env_vals, N);
 #endif
 
-/**
- * Searches the environment for variables matching any of `in', and writes
- * their values to `out'
- *
- * `in' and `out' are string vectors, each `size' elements long. The value
- * of in[n], if found, will be written to out[n], so `out' MUST be at least
- * as long as `in'. If a string in `in' is not found, its corresponding
- * entry in `out' will be left untouched. If you want to see which
- * variables were not found, ensure every pointer in `out' is initialised
- * to NULL. Beware that this function will not initialise `out' for you, so
- * if out[n] is uninitialised and in[n] is not found, the value of out[n]
- * remains undefined. Note also that if `in' contains the same string more
- * than once, only the first one will be respected
- */
 extern void __attribute__((access(read_only, 1, 3), access(write_only, 2, 3)))
 getenv_multiple(const char *const in[], const char * out[], size_t size)
 {

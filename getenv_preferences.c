@@ -9,10 +9,6 @@
 #  define ALLOCATE malloc
 #endif
 
-/**
- * Like getenv_preferencev(), but hairier. With C99 or GNU C, implemented
- * via variadic macro instead
- */
 extern char *
 getenv_preferences_(const char *begin, ...)
 /*

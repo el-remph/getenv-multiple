@@ -4,23 +4,6 @@
 /* see corresponding notes in getenv_multiple.c */
 extern const char *const * environ;
 
-/**
- * Searches the environment for a variable that appears in opts, preferring
- * the leftmost entry in opts
- *
- * Basically
- *	result = getenv_preference((char**){"FOO", "BAR", "MUNG", NULL});
- * is a bit like
- *	(result = getenv("FOO")) || (result = getenv("BAR")) || (result = getenv("MUNG"))
- * but less mank, and it only performs one pass over the environment. It
- * should still short-circuit if "FOO" is found
- *
- * @param opts is a NULL-terminated array of NUL-terminated strings
- *
- * @returns a pointer to the value of the leftmost string in `opts' that
- * corresponds to an existing environment variable, or NULL if no string in
- * opts is found in the environment
- */
 extern char *
 getenv_preferencev(const char *const opts[])
 {
