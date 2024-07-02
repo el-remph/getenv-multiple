@@ -22,7 +22,9 @@ extern C char
 	*getenv_preferences_(const char*, ...) __attribute__((sentinel));
 
 #if __STDC_VERSION__ >= 199900L
-#  define getenv_preferences(...) getenv_preferencev((const char*){__VA_ARGS__})
+#  define getenv_preferences(...)	getenv_preferencev((char**){__VA_ARGS__})
+#elif defined __GNUC__ && !defined __STRICT_ANSI__
+#  define getenv_preferences(args...)	getenv_preferencev((char**){args})
 #else
 #  define getenv_preferences getenv_preferences_
 #endif /* C99 */
