@@ -1,11 +1,17 @@
-#include <alloca.h>
 #include <stdarg.h>
-
+#include "alloca.h"
 #include "getenv_multiple.h"
 
+#ifdef HAVE_ALLOCA
+#  define ALLOCATE alloca
+#else
+#  include <stdlib.h>	/* malloc(3), free(3) */
+#  define ALLOCATE malloc
+#endif
+
 /**
- * Like getenv_preferencev(), but hairier. With C99, implemented via
- * variadic macro instead
+ * Like getenv_preferencev(), but hairier. With C99 or GNU C, implemented
+ * via variadic macro instead
  */
 extern char *
 getenv_preferences_(const char *begin, ...)
@@ -31,10 +37,18 @@ getenv_preferences_(const char *begin, ...)
 		size++;
 	va_end(ap);
 
-	argv = alloca(size);
+	argv = ALLOCATE(size);
 	va_start(ap, begin);
 	while ((argv[i++] = va_arg(ap, const char*)));
 	va_end(ap);
 
+#if HAVE_ALLOCA
 	return getenv_preferencev(argv);
+#else
+	{
+		char *const result = getenv_preferencev(argv);
+		free(argv);
+		return result;
+	}
+#endif
 }
