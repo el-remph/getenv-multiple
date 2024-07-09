@@ -7,17 +7,21 @@ PREFIX ?= /opt
 LIBDIR ?= $(PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 
-# Prepend defaults to existing CFLAGS so they can be unset easily (eg.
-# <make CFLAGS='-Wno-extra -std=gnu23'>)
-CFLAGS := -Wall -Wextra -ansi $(CFLAGS)
+CFLAGS = -Wall -Wextra -std=c89 # more portable than -ansi
 
-.PHONY = all clean install
+.PHONY = all clean install test
 all: libgetenv_multiple.a
 clean:
-	rm -fv libgetenv_multiple.a alloca.h $(OBJS)
+	rm -fv libgetenv_multiple.a alloca.h $(OBJS) example/a.out
 install: all
 	install -D -m 644 -t $(LIBDIR) libgetenv_multiple.a
 	install -D -m 644 -t $(INCLUDEDIR) getenv_multiple.h
+test: libgetenv_multiple.a
+	$(MAKE) -j1 -C example CFLAGS+=-std=c89
+	$(MAKE) -j1 -C example CFLAGS+=-std=gnu89
+	$(MAKE) -j1 -C example CFLAGS+=-std=c11
+# Strictly one job^, otherwise there are races on a.out. Could fix that, but
+# it would also make output pretty confusing
 
 libgetenv_multiple.a: libgetenv_multiple.a($(OBJS))
 $(OBJS): getenv_multiple.h

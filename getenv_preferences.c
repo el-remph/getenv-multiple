@@ -9,7 +9,7 @@
 #  define ALLOCATE malloc
 #endif
 
-extern char *
+extern char * __attribute__((nonnull(1), sentinel))
 getenv_preferences_(const char *begin, ...)
 /*
  * Justification: look, I'm sure a sensible system would allow me to just
@@ -21,20 +21,23 @@ getenv_preferences_(const char *begin, ...)
  * original buffer!
  *
  * Anyway, I just guess (hope) that a user won't pass enough arguments to
- * fill more than half stack size
+ * fill more than half stack size. Can we test for that, maybe with
+ * getrlimit(2), RLIMIT_AS and ifdefery?
  */
 {
 	va_list ap;
 	const char ** argv;
-	size_t i = 0, size = 0;
+	size_t i = 0;
 
 	va_start(ap, begin);
 	while (va_arg(ap, const char*))
-		size++;
+		i++;
 	va_end(ap);
 
-	argv = ALLOCATE(size);
+	argv = ALLOCATE((i + 1) * sizeof *argv); /* +1 for `begin' */
+	argv[0] = begin;
 	va_start(ap, begin);
+	i = 1; /* already done `begin' */
 	while ((argv[i++] = va_arg(ap, const char*)));
 	va_end(ap);
 

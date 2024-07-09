@@ -70,7 +70,7 @@ void getenv_multiple_sorted(const char *const in[], const char * out[], size_t s
  * the leftmost entry in opts
  *
  * Basically
- *	result = getenv_preference((char**){"FOO", "BAR", "MUNG", NULL});
+ *	result = getenv_preferencev((char**){"FOO", "BAR", "MUNG", NULL});
  * is a bit like
  *	(result = getenv("FOO")) || (result = getenv("BAR")) || (result = getenv("MUNG"))
  * but less mank, and it only performs one pass over the environment. It
@@ -88,13 +88,13 @@ char *getenv_preferencev(const char *const opts[]);
  * Like getenv_preferencev(), but hairier. With C99 or GNU C, implemented
  * via variadic macro instead
  */
-char *getenv_preferences_(const char*, ...) __attribute__((sentinel));
+char *getenv_preferences_(const char*, ...) __attribute__((nonnull(1), sentinel));
 
 #ifdef __cplusplus
 }
 #  define CHAR_PTR_PTR
 #else
-#  define CHAR_PTR_PTR (char**)
+#  define CHAR_PTR_PTR (char const *const[])
 #endif
 
 #if __STDC_VERSION__ >= 199900L
